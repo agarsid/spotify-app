@@ -4,7 +4,7 @@ import { View, Button } from 'react-native';
 
 import { connect } from 'react-redux';
 
-import authHandler from '../../utils/authenticationHandler';
+import authHandler from '../../utils/authHandler';
 
 import {
   setAccessToken,

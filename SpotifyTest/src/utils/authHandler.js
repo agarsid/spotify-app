@@ -15,6 +15,8 @@ class AuthenticationHandler {
         'user-library-read',
         'user-library-modify',
         'user-top-read',
+        'user-read-recently-played',
+        'user-read-currently-playing'
       ],
       serviceConfiguration: {
         authorizationEndpoint: 'https://accounts.spotify.com/authorize',
@@ -25,7 +27,6 @@ class AuthenticationHandler {
   async onLogin() {
     try {
       const result = await authorize(this.spotifyAuthConfig);
-      alert(JSON.stringify(result));
       return result;
     } catch (error) {
       console.log('error');
@@ -34,10 +35,14 @@ class AuthenticationHandler {
   }
 
   async refreshLogin(refreshToken) {
-    const result = await refresh(this.spotifyAuthConfig, {
-      refreshToken: refreshToken,
-    });
-    return result;
+    try {
+      const result = await refresh(this.spotifyAuthConfig, {
+        refreshToken: refreshToken,
+      });
+      return result;
+    } catch (e) {
+      console.log("potty: ", e)
+    }
   }
 }
 
