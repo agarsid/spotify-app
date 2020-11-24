@@ -15,8 +15,8 @@ import {
 } from '../../redux/features/authentication/authenticationSlice';
 
 //Navigations
-import LoggedinNavigation from '../../navigation/loggedInNavigation';
-import GuestNavigation from '../../navigation/guestNavigation';
+import LoggedIn from '../LoggedIn/loggedIn';
+import Guest from '../Guest/guest';
 
 class EntryScreen extends Component {
 
@@ -60,10 +60,10 @@ class EntryScreen extends Component {
         }
 
         if (accessToken) {
-            return <LoggedinNavigation authentication={accessToken} />;
+            return <LoggedIn accessToken={accessToken} />;
         }
 
-        return <GuestNavigation />;
+        return <Guest />;
     }
 }
 

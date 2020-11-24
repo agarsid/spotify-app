@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import SpotifyWebApi from 'spotify-web-api-js';
 
-export default function LoggedInNavigation(props) {
+export default function LoggedIn(props) {
     let spotifyApi = new SpotifyWebApi();
-    const { authentication } = props;
-    spotifyApi.setAccessToken(authentication);
+    const { accessToken } = props;
+    spotifyApi.setAccessToken(accessToken);
 
     spotifyApi.getMyCurrentPlayingTrack()
         .then(
@@ -14,6 +14,6 @@ export default function LoggedInNavigation(props) {
         )
 
     return (
-        <Text>{authentication}</Text>
+        <Text>{accessToken}</Text>
     );
 }
