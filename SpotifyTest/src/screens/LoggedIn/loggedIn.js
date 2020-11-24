@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { Text } from 'react-native';
 import SpotifyWebApi from 'spotify-web-api-js';
-
-import { db } from '../../config';
-
-
-let addItem = item => {
-    db.ref('/data').push({
-      name: item
-    });
-  };
+import {addSong} from '../../backend/routes';
 
 export default function LoggedIn(props) {
     let spotifyApi = new SpotifyWebApi();
@@ -19,8 +11,8 @@ export default function LoggedIn(props) {
     spotifyApi.getMyCurrentPlayingTrack()
         .then(
             (data) => {
-                console.log(JSON.stringify(data))
-                addItem(data)
+                console.log(JSON.stringify(data));
+                addSong(data);
             },
             (err) => console.log(err)
         )
