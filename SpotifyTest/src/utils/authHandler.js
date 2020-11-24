@@ -26,6 +26,7 @@ class AuthenticationHandler {
   }
   async onLogin() {
     try {
+      console.log('kin')
       const result = await authorize(this.spotifyAuthConfig);
       return result;
     } catch (error) {
@@ -36,6 +37,7 @@ class AuthenticationHandler {
 
   async refreshLogin(refreshToken) {
     try {
+      console.log('sup')
       const result = await refresh(this.spotifyAuthConfig, {
         refreshToken: refreshToken,
       });

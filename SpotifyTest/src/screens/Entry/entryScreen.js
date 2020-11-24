@@ -21,18 +21,24 @@ import Guest from '../Guest/guest';
 class EntryScreen extends Component {
 
     componentDidUpdate(prevProps) {
+        // console.log(this.state);
+        console.log(this.props);
+        console.log(prevProps)
         if (
             this.props.refreshToken !== prevProps.refreshToken &&
             !this.props.accessToken
         ) {
+            console.log('mahima');
             this.tryAutoLogin();
         }
         if (this.props.accessToken !== prevProps.accessToken) {
             this.props.setLoadingFalse();
+            console.log('navoneel')
         }
     }
 
     tryAutoLogin = async () => {
+        console.log('sid');
         this.props.setLoadingTrue();
         try {
             const authenticationObject = await authHandler.refreshLogin(
@@ -53,6 +59,7 @@ class EntryScreen extends Component {
     };
 
     render() {
+        console.log('all');
         const { accessToken, loading } = this.props.authentication;
 
         if (loading) {
