@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { combineReducers } from 'redux';
-
 import authenticationSlice from '../features/authentication/authenticationSlice';
 import { persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
