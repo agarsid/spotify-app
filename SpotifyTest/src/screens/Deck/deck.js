@@ -1,8 +1,7 @@
 import * as React from 'react';
 import Swiper from 'react-native-deck-swiper';
-import { Button, Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { COLORS } from '../../../constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
     container: {
@@ -29,27 +28,25 @@ const styles = StyleSheet.create({
 
 export default function GuestNavigation() {
     return (
-        <SafeAreaView>
-            <View style={styles.container}>
-                <Swiper
-                    cards={[{ name: 'Nav' }, { name: 'sid' }]}
-                    renderCard={(card) => {
-                        return (
-                            <View style={styles.card}>
-                                <Text style={styles.text}>{card.name}</Text>
-                            </View>
-                        )
-                    }}
-                    onSwiped={(cardIndex) => { console.log(cardIndex) }}
-                    onSwipedAll={() => { console.log('onSwipedAll') }}
-                    cardIndex={1}
-                    backgroundColor={COLORS.spotifyGreen}
-                    stackSize={2}
-                    infinite={true}
-                >
-                </Swiper>
-            </View>
-        </SafeAreaView>
+        <View style={styles.container}>
+            <Swiper
+                cards={[{ name: 'Nav' }, { name: 'sid' }]}
+                renderCard={(card) => {
+                    return (
+                        <View style={styles.card}>
+                            <Text style={styles.text}>{card.name}</Text>
+                        </View>
+                    )
+                }}
+                onSwiped={(cardIndex) => { console.log(cardIndex) }}
+                onSwipedAll={() => { console.log('onSwipedAll') }}
+                cardIndex={1}
+                backgroundColor={COLORS.spotifyGreen}
+                stackSize={2}
+                infinite={true}
+            >
+            </Swiper>
+        </View>
     );
 }
 
