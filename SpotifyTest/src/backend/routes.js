@@ -1,4 +1,4 @@
-import { db } from '../../backend/config';
+import { db } from './config';
 
 export let addSong = item => {
     db.ref('/songs').push({

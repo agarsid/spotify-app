@@ -29,6 +29,7 @@ export default function LoggedIn(props) {
                 console.log("lmao")
             }
         } catch (e) {
+            console.log('a')
             console.warn(e)
         }
     }
