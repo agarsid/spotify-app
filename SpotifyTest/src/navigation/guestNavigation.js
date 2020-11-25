@@ -8,7 +8,7 @@ const Stack = createStackNavigator()
 export default function GuestNavigation() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Login" component={Guest} />
+            <Stack.Screen options={{ headerShown: false }} name="Login" component={Guest} />
         </Stack.Navigator>
     );
 }
