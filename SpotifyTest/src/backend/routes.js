@@ -1,15 +1,38 @@
 import { db } from './config';
 
-export let addSong = item => {
+export const addSong = (item,location) => {
+
+  try{
+    console.log(item.item.artists.map(artist => (artist.name)));
+    var song = {
+      song_id: item.item.id,
+      name: item.item.name,
+      albumImg: item.item.album.images[0].url,
+      artist: item.item.artists.map(artist => (artist.name)),
+      timestamp: item.timestamp,
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      likes: 1
+    }
+
     db.ref('/songs').push({
-      song: item
+      song: song
     });
-  };
+    return {msg: 'Success'};
+  }
+  catch(e){
+    console.error(e);
+    return {msg: 'Error'};
+  }
+};
 
-export let addLocation = item => {
-    db.ref('/locations').push({
-      location: item
-    });
-  };
 
-// export let incSongLikes
+export const getSongs = (location) => {
+  latitude  = location.coords.latitude,
+  longitude = location.coords.longitude
+
+}
+
+export const updateSongLike = (song_id) => {
+
+}

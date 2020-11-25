@@ -1,10 +1,14 @@
 import * as React from 'react';
+import {useState} from 'react'
 import { Text, PermissionsAndroid, View, Button } from 'react-native';
 import SpotifyWebApi from 'spotify-web-api-js';
 import {addSong} from '../../backend/routes';
 import Geolocation from '@react-native-community/geolocation'
 
 export default function LoggedIn(props) {
+    const [item, setItem] = useState(null)
+    const [locaion, setLocation] = useState(null)
+
     let spotifyApi = new SpotifyWebApi();
     const { accessToken } = props;
     spotifyApi.setAccessToken(accessToken);
@@ -24,7 +28,7 @@ export default function LoggedIn(props) {
             );
             if (res === PermissionsAndroid.RESULTS.GRANTED) {
                 console.log("Granted")
-                Geolocation.getCurrentPosition(info => console.log(info))
+                Geolocation.getCurrentPosition(info => setLocation(info))
             } else {
                 console.log("lmao")
             }
@@ -38,7 +42,7 @@ export default function LoggedIn(props) {
         .then(
             (data) => {
                 console.log(JSON.stringify(data));
-                addSong(data);
+                setItem(data);
             },
             (err) => console.log(err)
         )
