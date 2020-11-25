@@ -16,6 +16,7 @@ import {
 import LoggedIn from '../LoggedIn/loggedIn';
 import { createStackNavigator } from '@react-navigation/stack'
 import GuestNavigation from '../../navigation/guestNavigation';
+import Deck from '../Deck/deck'
 
 const Stack = createStackNavigator()
 
@@ -65,9 +66,7 @@ class EntryScreen extends Component {
         if (accessToken) {
             return (
                 <Stack.Navigator>
-                    <Stack.Screen name="Home">
-                        {props => <LoggedIn {...props} accessToken={accessToken} />}
-                    </Stack.Screen>
+                    <Stack.Screen options={{ headerShown: false }} name="Home" component={Deck} />
                 </Stack.Navigator>
             )
         }
