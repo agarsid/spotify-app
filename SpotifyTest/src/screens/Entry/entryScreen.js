@@ -1,7 +1,5 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-
 //Authentication handler
 import authHandler from '../../utils/authHandler';
 
@@ -16,7 +14,10 @@ import {
 
 //Navigations
 import LoggedIn from '../LoggedIn/loggedIn';
-import Guest from '../Guest/guest';
+import { createStackNavigator } from '@react-navigation/stack'
+import GuestNavigation from '../../navigation/guestNavigation';
+
+const Stack = createStackNavigator()
 
 class EntryScreen extends Component {
 
@@ -54,7 +55,7 @@ class EntryScreen extends Component {
             this.props.setLoadingFalse();
         } catch (e) {
             console.log("Hello: ", e);
-            this.props.setLoadingFalse();
+            // this.props.setLoadingFalse();
         }
     };
 
@@ -63,14 +64,22 @@ class EntryScreen extends Component {
         const { accessToken, loading } = this.props.authentication;
 
         if (loading) {
-            return <Text>Loading</Text>;
+            return (
+                <GuestNavigation />
+            );
         }
 
         if (accessToken) {
-            return <LoggedIn accessToken={accessToken} />;
+            return (
+                <Stack.Navigator>
+                    <Stack.Screen name="Home">
+                        {props => <LoggedIn {...props} accessToken={accessToken} />}
+                    </Stack.Screen>
+                </Stack.Navigator>
+            )
         }
 
-        return <Guest />;
+        return <GuestNavigation />;
     }
 }
 
