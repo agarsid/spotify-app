@@ -147,7 +147,7 @@ export default class Swiper extends React.Component {
 
             else {
                 return (
-                    <Animated.View key={i} style={[{ opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 150, width: SCREEN_WIDTH - 25, position: 'absolute' }]}>
+                    <Animated.View {...this.PanResponder.panHandlers} key={i} style={[{ opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 150, width: SCREEN_WIDTH - 25, position: 'absolute' }]}>
                         <Image
                             style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
                             source={users[i].art} />
@@ -158,9 +158,6 @@ export default class Swiper extends React.Component {
                         </Animated.View>
                 )
             }
-
-
-
         }).reverse()
     }
 
