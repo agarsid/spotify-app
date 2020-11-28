@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useState} from 'react'
 import { Text, PermissionsAndroid, View, Button } from 'react-native';
 import SpotifyWebApi from 'spotify-web-api-js';
-import {addSong} from '../../backend/routes';
+import {addSong, getSongs, updateSongLike} from '../../backend/routes';
 import Geolocation from '@react-native-community/geolocation'
 
 export default function LoggedIn(props) {
@@ -42,7 +42,13 @@ export default function LoggedIn(props) {
         .then(
             (data) => {
                 console.log(JSON.stringify(data));
-                setItem(data);
+                // setItem(data);
+                coords = {latitude: 123, longitude: 23};
+                location = {coords: coords}
+                addSong(data,location)
+                getSongs(location)
+                updateSongLike('-MNDKyzz6NEPUPu82nZW');
+
             },
             (err) => console.log(err)
         )
