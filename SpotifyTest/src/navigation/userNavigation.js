@@ -49,7 +49,7 @@ export default function UserNavigation(props) {
         }}>
           <Tab.Screen name="Profile" component={ProfileScreen} />
           <Tab.Screen name="Discover" component={Swiper} />
-          <Tab.Screen name="Tag" component={TagScreen} />
+          <Tab.Screen name="Tag" children={() => <TagScreen accessToken={accessToken} />} />
         </Tab.Navigator>
     );
   }

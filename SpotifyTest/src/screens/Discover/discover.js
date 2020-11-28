@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, Animated, Image, PanResponder } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Animated, Image, PanResponder, PermissionsAndroid } from 'react-native';
 import images from '../../../constants/images';
+import Geolocation from '@react-native-community/geolocation';
+import { getSongs } from '../../backend/routes';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
@@ -19,13 +21,13 @@ const users = [
 
 export default class Swiper extends React.Component {
 
-
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
 
         this.position = new Animated.ValueXY()
         this.state = {
-            currentIndex: 0
+            currentIndex: 0,
+            songs : []
         }
 
         this.rotate = this.position.x.interpolate({
@@ -109,9 +111,44 @@ export default class Swiper extends React.Component {
 
     }
 
-    renderUsers = () => {
-        return users.map((item, i) => {
+    async componentDidMount(){
+        try {
+            const res = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: "Location Information required",
+                    message: "We need your location in order to tag songs",
+                    buttonNegative: "Cancel",
+                    buttonPositive: "OK"
+                }
+            );
+            console.log('nn')
+            if (res === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Granted")
+                Geolocation.getCurrentPosition(info => {
+                    console.log(info)
+                    console.log(getSongs(info))
+                    getSongs(info)
+                    .then(data => {
+                        this.setState({songs: data})
+                        console.log('hi',data)
+                    })
+                    .catch((e)=> console.log(e))
+                
+                })
+            } else {
+                console.log("lmao")
+            }
+        } catch (e) {
+            console.log('a')
+            console.warn(e)
+        }
+    }
 
+
+    renderUsers = () => {
+        return this.state.songs.map((song, i) => {
+            let item = song.song
             if (i < this.state.currentIndex) {
                 return null
             }
@@ -134,12 +171,11 @@ export default class Swiper extends React.Component {
 
                         <Image
                             style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-                            source={users[i].art}
+                            source={{uri: item.albumImg}}
                         />
                         <View style={{ ...StyleSheet.absoluteFillObject, top: 440, backgroundColor: "rgba(0,0,0,.5)", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingTop: 10 }}>
-                            <Text style={{ position: "relative", top: 0, left: 20, color: "white", fontSize: 30, fontWeight: "bold" }}>{users[i].song}</Text>
-                            <Text style={{ position: "relative", top: 7, left: 20, color: "white", fontSize: 15 }}>{users[i].artist}</Text>
-                            
+                            <Text style={{ position: "relative", top: 0, left: 20, color: "white", fontSize: 30, fontWeight: "bold" }}>{item.name}</Text>
+                            <Text style={{ position: "relative", top: 7, left: 20, color: "white", fontSize: 15 }}>{item.artist.map(a => a)}</Text>
                         </View>
                     </Animated.View>
                 )
@@ -150,10 +186,10 @@ export default class Swiper extends React.Component {
                     <Animated.View {...this.PanResponder.panHandlers} key={i} style={[{ opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 150, width: SCREEN_WIDTH - 25, position: 'absolute' }]}>
                         <Image
                             style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-                            source={users[i].art} />
+                            source={{uri: item.albumImg}} />
                         <View style={{...StyleSheet.absoluteFillObject, top: 440, backgroundColor:"rgba(0,0,0,.5)", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingTop: 10}}>
-                        <Text style={{position: "relative", top: 0, left: 20, color:"white", fontSize:30, fontWeight: "bold"}}>{users[i].song}</Text>
-                        <Text style={{position: "relative", top: 7, left: 20, color:"white", fontSize:15}}>{users[i].artist}</Text>
+                        <Text style={{position: "relative", top: 0, left: 20, color:"white", fontSize:30, fontWeight: "bold"}}>{item.name}</Text>
+                        <Text style={{position: "relative", top: 7, left: 20, color:"white", fontSize:15}}>{item.artist.map(a => a)}</Text>
                         </View>                    
                         </Animated.View>
                 )
@@ -165,7 +201,9 @@ export default class Swiper extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center", marginTop: 10 }}>
-                    {this.renderUsers()}
+                    {this.state.songs ?
+                        this.renderUsers() : <Text>Loading</Text>
+                    }
                 </View>
             </View>
         )

@@ -30,34 +30,39 @@ export const addSong = (item,location) => {
 
 
 export const getSongs = (location) => {
-  
-  result = {}
-  
-  loc1 = {latitude: location.coords.latitude, longitude: location.coords.longitude}
-  
-  response =[]
 
-  songs.on("value", function(snapshot) {
-    result = snapshot.val();
-    // const arrayOfObj = Object.entries(result).map((e) => ( { [e[0]]: e[1] } ));
-    Object.keys(result).forEach(function(key) {
-
-      loc2 = {latitude: result[key].song.latitude, longitude: result[key].song.longitude}
-      console.log(distanceBetweenLocations(loc1,loc2));
-      if(distanceBetweenLocations(loc1,loc2) > 0){
-        result[key].database_id = key
-        response.push(result[key])
-      }
+  return new Promise((resolve,reject) => {
+    result = {}
+  
+    loc1 = {latitude: location.coords.latitude, longitude: location.coords.longitude}
     
+    response =[]
+  
+    songs.on("value", async function(snapshot) {
+      result = await snapshot.val();
+      Object.keys(result).forEach(function(key) {
+  
+        loc2 = {latitude: result[key].song.latitude, longitude: result[key].song.longitude}
+        console.log(distanceBetweenLocations(loc1,loc2));
+        if(distanceBetweenLocations(loc1,loc2) >= 0){
+          result[key].database_id = key
+          response.push(result[key])
+        }
+      
+      });
+      // console.log(response)
+      resolve(response);
+      
+      // console.log(arrayOfObj)
+  
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+      reject(errorObject.code)
     });
-    console.log(response)
-    return {'res':response};
-    
-    // console.log(arrayOfObj)
-
-  }, function (errorObject) {
-    console.log("The read failed: " + errorObject.code);
-  });
+  
+  })
+  
+  
 
 }
 

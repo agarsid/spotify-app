@@ -46,8 +46,8 @@ export default function LoggedIn(props) {
                 coords = {latitude: 123, longitude: 23};
                 location = {coords: coords}
                 addSong(data,location)
-                getSongs(location)
-                updateSongLike('-MNDKyzz6NEPUPu82nZW');
+                // getSongs(location)
+                // updateSongLike('-MNDKyzz6NEPUPu82nZW');
 
             },
             (err) => console.log(err)
