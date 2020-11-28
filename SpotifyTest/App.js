@@ -12,6 +12,7 @@ import EntryScreen from './src/screens/Entry/entryScreen';
 
 class App extends Component {
   render() {
+    console.log('App')
     return (
       <NavigationContainer theme={theme}>
         <Provider store={store}>
