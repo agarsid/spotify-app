@@ -40,18 +40,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const Tab = createBottomTabNavigator();
 
 export default function UserNavigation(props) {
-    const {accessToken} = props;
+    const { accessToken } = props;
     return (
-        <Tab.Navigator tabBarOptions= {{
+        <Tab.Navigator tabBarOptions={{
             style: {
                 backgroundColor: '#000000',
             },
         }}>
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-          <Tab.Screen name="Discover" component={Swiper} />
-          <Tab.Screen name="Tag" children={() => <TagScreen accessToken={accessToken} />} />
+            <Tab.Screen name="Profile" children = {() => <ProfileScreen accessToken={accessToken} />} />
+            <Tab.Screen name="Discover" children={() => <Swiper accessToken={accessToken} />} />
+            <Tab.Screen name="Tag" children={() => <TagScreen accessToken={accessToken} />} />
         </Tab.Navigator>
     );
-  }
+}
 
 

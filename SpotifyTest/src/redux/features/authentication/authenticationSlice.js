@@ -23,6 +23,11 @@ const authenticationSlice = createSlice({
         setLoadingFalse(state) {
             state.loading = false;
         },
+        setNull(state) {
+            state.accessToken = null,
+                state.refreshToken = null,
+                state.loading = false
+        },
     },
 });
 
@@ -31,6 +36,7 @@ export const {
     setRefreshToken,
     setLoadingTrue,
     setLoadingFalse,
+    setNull,
 } = authenticationSlice.actions;
 
 export default authenticationSlice.reducer;

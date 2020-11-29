@@ -9,6 +9,7 @@ import { store } from './src/redux/store/store';
 
 import EntryScreen from './src/screens/Entry/entryScreen';
 
+console.ignoredYellowBox = ['Setting a timer'];
 
 class App extends Component {
   render() {

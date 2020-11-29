@@ -1,23 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, Animated, Image, PanResponder, PermissionsAndroid } from 'react-native';
-import images from '../../../constants/images';
+import { StyleSheet, Text, View, Dimensions, Animated, Image, PanResponder, PermissionsAndroid, Button } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import { getSongs } from '../../backend/routes';
+import { getSongs, updateSongLike } from '../../backend/routes';
+import SpotifyWebApi from 'spotify-web-api-js'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
-
-
-const users = [
-    { id: 1, song: "What You Need", artist: "KAYTRANADA", art: images.bubba },
-    { id: 2, song: "Armistice", artist: "Phoenix", art: images.wam },
-    { id: 1, song: "What You Need", artist: "KAYTRANADA", art: images.bubba },
-    { id: 2, song: "Armistice", artist: "Phoenix", art: images.wam },
-    { id: 1, song: "What You Need", artist: "KAYTRANADA", art: images.bubba },
-    { id: 2, song: "Armistice", artist: "Phoenix", art: images.wam },
-    { id: 1, song: "What You Need", artist: "KAYTRANADA", art: images.bubba },
-    { id: 2, song: "Armistice", artist: "Phoenix", art: images.wam }
-]
 
 export default class Swiper extends React.Component {
 
@@ -27,13 +15,13 @@ export default class Swiper extends React.Component {
         this.position = new Animated.ValueXY()
         this.state = {
             currentIndex: 0,
-            songs : []
+            songs: []
         }
 
         this.rotate = this.position.x.interpolate({
             inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
             outputRange: ['-10deg', '0deg', '10deg'],
-            extrapolate: 'clamp' 
+            extrapolate: 'clamp'
         })
 
         this.rotateAndTranslate = {
@@ -67,6 +55,8 @@ export default class Swiper extends React.Component {
             extrapolate: 'clamp'
         })
 
+        this.spotify = new SpotifyWebApi();
+        this.spotify.setAccessToken(this.props.accessToken)
         this.PanResponder = PanResponder.create({
 
             onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -76,15 +66,18 @@ export default class Swiper extends React.Component {
 
             },
             onPanResponderRelease: (evt, gestureState) => {
+                let index;
                 if (gestureState.dx > 120) {
                     Animated.spring(this.position, {
                         toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
                         useNativeDriver: true
                     }).start(() => {
+                        index = this.state.currentIndex;
                         this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
                             this.position.setValue({ x: 0, y: 0 })
                         })
-                        console.log("right")
+                        var song_id = this.state.songs[index].database_id;
+                        updateSongLike(song_id)
                     })
                 }
                 else if (gestureState.dx < -120) {
@@ -95,12 +88,12 @@ export default class Swiper extends React.Component {
                         this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
                             this.position.setValue({ x: 0, y: 0 })
                         })
-                        console.log("left")
+
                     })
                 }
-                else{
+                else {
                     Animated.spring(this.position, {
-                        toValue: {x:0, y:0},
+                        toValue: { x: 0, y: 0 },
                         friction: 4,
                         useNativeDriver: true,
                     }).start()
@@ -111,7 +104,7 @@ export default class Swiper extends React.Component {
 
     }
 
-    async componentDidMount(){
+    async componentDidMount() {
         try {
             const res = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -129,12 +122,12 @@ export default class Swiper extends React.Component {
                     console.log(info)
                     console.log(getSongs(info))
                     getSongs(info)
-                    .then(data => {
-                        this.setState({songs: data})
-                        console.log('hi',data)
-                    })
-                    .catch((e)=> console.log(e))
-                
+                        .then(data => {
+                            this.setState({ songs: data })
+                            console.log('hi', data)
+                        })
+                        .catch((e) => console.log(e))
+
                 })
             } else {
                 console.log("lmao")
@@ -145,6 +138,10 @@ export default class Swiper extends React.Component {
         }
     }
 
+    onClick = (id) => {
+        const sid = `spotify:track:${id}`
+        this.spotify.play({ uris: [sid] }).then(() => console.log(`playing ${sid}`)).catch((err) => console.log(err))
+    }
 
     renderUsers = () => {
         return this.state.songs.map((song, i) => {
@@ -171,12 +168,13 @@ export default class Swiper extends React.Component {
 
                         <Image
                             style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-                            source={{uri: item.albumImg}}
+                            source={{ uri: item.albumImg }}
                         />
                         <View style={{ ...StyleSheet.absoluteFillObject, top: 440, backgroundColor: "rgba(0,0,0,.5)", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingTop: 10 }}>
                             <Text style={{ position: "relative", top: 0, left: 20, color: "white", fontSize: 30, fontWeight: "bold" }}>{item.name}</Text>
                             <Text style={{ position: "relative", top: 7, left: 20, color: "white", fontSize: 15 }}>{item.artist.map(a => a)}</Text>
                         </View>
+                        <Button onPress={() => this.onClick(this.state.songs[i].song.song_id)} title="Play song"></Button>
                     </Animated.View>
                 )
             }
@@ -186,12 +184,13 @@ export default class Swiper extends React.Component {
                     <Animated.View {...this.PanResponder.panHandlers} key={i} style={[{ opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 150, width: SCREEN_WIDTH - 25, position: 'absolute' }]}>
                         <Image
                             style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-                            source={{uri: item.albumImg}} />
-                        <View style={{...StyleSheet.absoluteFillObject, top: 440, backgroundColor:"rgba(0,0,0,.5)", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingTop: 10}}>
-                        <Text style={{position: "relative", top: 0, left: 20, color:"white", fontSize:30, fontWeight: "bold"}}>{item.name}</Text>
-                        <Text style={{position: "relative", top: 7, left: 20, color:"white", fontSize:15}}>{item.artist.map(a => a)}</Text>
-                        </View>                    
-                        </Animated.View>
+                            source={{ uri: item.albumImg }} />
+                        <View style={{ ...StyleSheet.absoluteFillObject, top: 440, backgroundColor: "rgba(0,0,0,.5)", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingTop: 10 }}>
+                            <Text style={{ position: "relative", top: 0, left: 20, color: "white", fontSize: 30, fontWeight: "bold" }}>{item.name}</Text>
+                            <Text style={{ position: "relative", top: 7, left: 20, color: "white", fontSize: 15 }}>{item.artist.map(a => a)}</Text>
+                        </View>
+                        <Button onPress={() => this.onClick(this.state.songs[i].song.song_id)} title="Play song"></Button>
+                    </Animated.View>
                 )
             }
         }).reverse()
